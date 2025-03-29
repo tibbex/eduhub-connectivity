@@ -50,8 +50,8 @@ const MobileMenu = () => {
           </SidebarHeader>
           
           <SidebarContent>
-            <div className="mb-4 px-4">
-              <div className="flex items-center space-x-3 p-2 border-b pb-4">
+            <div className="mb-6 px-4">
+              <div className="flex items-center space-x-3 p-3 rounded-xl bg-primary/5 border-primary/10 border">
                 <Avatar className="h-10 w-10 ring-2 ring-primary/30 transition-all duration-200 hover:ring-primary">
                   <AvatarImage src={userProfile?.photoURL || ""} alt={userProfile?.name || "User"} />
                   <AvatarFallback className="bg-gradient-to-br from-eduPurple to-eduBlue text-white">
@@ -70,22 +70,25 @@ const MobileMenu = () => {
             </div>
             
             <SidebarMenu>
-              {menuItems.map((item) => {
+              {menuItems.map((item, index) => {
                 const isActive = location.pathname === item.path;
                 return (
                   <SidebarMenuItem key={item.path}>
                     <SidebarMenuButton asChild isActive={isActive}>
-                      <Link to={item.path} className="group transition-all duration-200">
+                      <Link 
+                        to={item.path} 
+                        className={`group ls-nav-item ${isActive ? 'ls-nav-item-active' : 'ls-nav-item-inactive'} ls-slide-up ls-stagger-${index + 1}`}
+                      >
                         <motion.div
-                          className="flex items-center"
+                          className="flex items-center gap-3 w-full"
                           whileTap={{ scale: 0.95 }}
                         >
-                          <item.icon className={`h-4 w-4 transition-all duration-200 ${isActive ? 'text-primary' : 'group-hover:text-primary/70'}`} />
+                          <item.icon className={`h-4 w-4 ${isActive ? 'text-primary' : 'group-hover:text-primary/70'}`} />
                           <span>{item.label}</span>
                           {isActive && (
                             <motion.div
                               className="ml-auto h-2 w-2 rounded-full bg-primary"
-                              layoutId="activeIndicator"
+                              layoutId="mobileActiveIndicator"
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
                               exit={{ opacity: 0 }}
@@ -103,7 +106,7 @@ const MobileMenu = () => {
           <SidebarFooter className="p-4">
             <Button 
               variant="outline" 
-              className="w-full flex gap-2 items-center justify-center hover:bg-primary/10 transition-colors duration-200"
+              className="w-full flex gap-2 items-center justify-center hover:bg-primary/10 transition-colors duration-200 ls-button"
               onClick={() => logout()}
             >
               <LogOut className="h-4 w-4" />

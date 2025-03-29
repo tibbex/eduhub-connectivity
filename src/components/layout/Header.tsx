@@ -7,17 +7,31 @@ import { useState } from "react";
 import CreatePostDialog from "@/components/post/CreatePostDialog";
 import AppNavigation from "./AppNavigation";
 import UserMenu from "./UserMenu";
+import { motion } from "framer-motion";
 
 const Header = () => {
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
 
   return (
-    <header className="w-full bg-background border-b sticky top-0 z-50">
+    <header className="w-full bg-white border-b sticky top-0 z-50 shadow-sm">
       <div className="container flex h-16 items-center px-4 sm:justify-between sm:space-x-0 lg:px-6">
         <div className="flex gap-4 md:gap-6 lg:gap-10">
           <Link to="/home" className="flex items-center space-x-2">
-            <img src={logo} alt="EduHub Logo" className="h-8 w-8" />
-            <span className="hidden md:inline-block font-bold text-xl">EduHub</span>
+            <motion.img 
+              src={logo} 
+              alt="EduHub Logo" 
+              className="h-8 w-8" 
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            />
+            <motion.span 
+              className="hidden md:inline-block font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-eduPurple to-eduBlue"
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              EduHub
+            </motion.span>
           </Link>
           
           <div className="hidden md:flex">
@@ -26,24 +40,34 @@ const Header = () => {
         </div>
         
         <div className="flex items-center space-x-2">
-          <Button 
-            onClick={() => setIsCreatePostOpen(true)} 
-            variant="ghost" 
-            size="sm"
-            className="hidden sm:flex"
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Create Post
-          </Button>
+            <Button 
+              onClick={() => setIsCreatePostOpen(true)} 
+              variant="default" 
+              size="sm"
+              className="hidden sm:flex ls-button bg-gradient-to-r from-eduPurple to-eduBlue hover:opacity-90 transition-all duration-200"
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Create Post
+            </Button>
+          </motion.div>
           
-          <Button
-            onClick={() => setIsCreatePostOpen(true)}
-            variant="ghost"
-            size="icon"
-            className="sm:hidden"
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <PlusCircle className="h-4 w-4" />
-          </Button>
+            <Button
+              onClick={() => setIsCreatePostOpen(true)}
+              variant="default"
+              size="icon"
+              className="sm:hidden ls-button bg-gradient-to-r from-eduPurple to-eduBlue hover:opacity-90"
+            >
+              <PlusCircle className="h-4 w-4" />
+            </Button>
+          </motion.div>
           
           <UserMenu />
         </div>

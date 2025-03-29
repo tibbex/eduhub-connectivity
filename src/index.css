@@ -128,6 +128,27 @@
   .menu-icon-inactive {
     @apply text-muted-foreground group-hover:text-primary/70;
   }
+  
+  /* LearnSpace styling */
+  .ls-card {
+    @apply rounded-xl border bg-white shadow-sm hover:shadow-md transition-all duration-300;
+  }
+  
+  .ls-button {
+    @apply rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95;
+  }
+  
+  .ls-nav-item {
+    @apply relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200;
+  }
+  
+  .ls-nav-item-active {
+    @apply bg-primary/10 text-primary font-medium;
+  }
+  
+  .ls-nav-item-inactive {
+    @apply text-muted-foreground hover:bg-muted/80 hover:text-foreground;
+  }
 }
 
 /* Animation utilities */
@@ -162,3 +183,25 @@
 .animate-combined {
   animation: fadeIn 0.3s ease-out forwards, scaleIn 0.2s ease-out forwards;
 }
+
+/* LearnSpace animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ls-slide-up {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+.ls-stagger-1 { animation-delay: 0.1s; }
+.ls-stagger-2 { animation-delay: 0.2s; }
+.ls-stagger-3 { animation-delay: 0.3s; }
+.ls-stagger-4 { animation-delay: 0.4s; }
+.ls-stagger-5 { animation-delay: 0.5s; }

@@ -6,9 +6,10 @@ import { useAuth } from "@/contexts/AuthContext";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageSquare, ThumbsUp, Share2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 
 interface Post {
   id: string;
@@ -151,18 +152,39 @@ const Home = () => {
     }
   };
 
+  // Container variants for staggered animations
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Home</h1>
-        <p className="text-muted-foreground">{welcomeMessage()}</p>
-      </div>
+      <motion.div 
+        className="mb-8"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-eduPurple to-eduBlue mb-2">Home</h1>
+        <p className="text-muted-foreground text-lg">{welcomeMessage()}</p>
+      </motion.div>
 
       {/* Post skeleton while loading */}
       {loading && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i}>
+            <Card key={i} className="ls-card overflow-hidden">
               <CardHeader className="pb-2">
                 <div className="flex items-center space-x-3">
                   <Skeleton className="h-10 w-10 rounded-full" />
@@ -191,61 +213,73 @@ const Home = () => {
 
       {/* Actual posts */}
       {!loading && (
-        <div className="space-y-4">
+        <motion.div 
+          className="space-y-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
           {posts.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-8">
-                <p className="text-muted-foreground mb-2">No posts yet</p>
-                <p className="text-center text-sm text-muted-foreground">
-                  Be the first to share something with your educational network!
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            posts.map((post) => (
-              <Card key={post.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center space-x-3">
-                    <Avatar>
-                      <AvatarFallback>{getUserInitials(post.authorName)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="flex items-baseline space-x-2">
-                        <CardTitle className="text-base">{post.authorName}</CardTitle>
-                        <span className="text-xs text-muted-foreground capitalize">
-                          {post.authorRole}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {formatDate(post.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pb-2">
-                  <p className="whitespace-pre-line">{post.text}</p>
-                  {renderFileAttachment(post)}
+            <motion.div variants={itemVariants}>
+              <Card className="ls-card">
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <p className="text-xl font-medium text-primary mb-2">No posts yet</p>
+                  <p className="text-center text-muted-foreground">
+                    Be the first to share something with your educational network!
+                  </p>
                 </CardContent>
-                <CardFooter className="pt-2">
-                  <div className="flex w-full divide-x">
-                    <Button variant="ghost" className="flex-1">
-                      <ThumbsUp className="mr-1 h-4 w-4" />
-                      {post.likes > 0 ? post.likes : "Like"}
-                    </Button>
-                    <Button variant="ghost" className="flex-1">
-                      <MessageSquare className="mr-1 h-4 w-4" />
-                      {post.comments > 0 ? post.comments : "Comment"}
-                    </Button>
-                    <Button variant="ghost" className="flex-1">
-                      <Share2 className="mr-1 h-4 w-4" />
-                      {post.shares > 0 ? post.shares : "Share"}
-                    </Button>
-                  </div>
-                </CardFooter>
               </Card>
+            </motion.div>
+          ) : (
+            posts.map((post, index) => (
+              <motion.div key={post.id} variants={itemVariants}>
+                <Card className="ls-card hover:shadow-md transition-all duration-300 overflow-hidden">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="h-10 w-10 ring-1 ring-primary/20 transition-all duration-200 hover:ring-primary/60">
+                        <AvatarImage src={post.authorId ? `https://i.pravatar.cc/150?u=${post.authorId}` : undefined} alt={post.authorName} />
+                        <AvatarFallback className="bg-gradient-to-br from-eduPurple to-eduBlue text-white">
+                          {getUserInitials(post.authorName)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="flex items-baseline space-x-2">
+                          <CardTitle className="text-base font-semibold">{post.authorName}</CardTitle>
+                          <span className="text-xs text-muted-foreground capitalize px-2 py-0.5 bg-muted rounded-full">
+                            {post.authorRole}
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDate(post.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pb-3">
+                    <p className="whitespace-pre-line">{post.text}</p>
+                    {renderFileAttachment(post)}
+                  </CardContent>
+                  <CardFooter className="pt-0">
+                    <div className="flex w-full divide-x">
+                      <Button variant="ghost" className="flex-1 rounded-none hover:bg-primary/5 transition-colors duration-200">
+                        <ThumbsUp className="mr-1 h-4 w-4" />
+                        {post.likes > 0 ? post.likes : "Like"}
+                      </Button>
+                      <Button variant="ghost" className="flex-1 rounded-none hover:bg-primary/5 transition-colors duration-200">
+                        <MessageSquare className="mr-1 h-4 w-4" />
+                        {post.comments > 0 ? post.comments : "Comment"}
+                      </Button>
+                      <Button variant="ghost" className="flex-1 rounded-none hover:bg-primary/5 transition-colors duration-200">
+                        <Share2 className="mr-1 h-4 w-4" />
+                        {post.shares > 0 ? post.shares : "Share"}
+                      </Button>
+                    </div>
+                  </CardFooter>
+                </Card>
+              </motion.div>
             ))
           )}
-        </div>
+        </motion.div>
       )}
     </div>
   );
