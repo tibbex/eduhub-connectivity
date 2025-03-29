@@ -47,13 +47,13 @@ const UserMenu = () => {
       <DropdownMenuTrigger asChild>
         <button className="flex items-center space-x-2 rounded-full hover:bg-accent p-1 focus:outline-none">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={userProfile?.photoURL || ""} alt={userProfile?.displayName || "User"} />
+            <AvatarImage src={userProfile?.photoURL || ""} alt={userProfile?.name || "User"} />
             <AvatarFallback>
-              {userProfile?.displayName ? userProfile.displayName.charAt(0).toUpperCase() : "U"}
+              {userProfile?.name ? userProfile.name.charAt(0).toUpperCase() : "U"}
             </AvatarFallback>
           </Avatar>
           <span className="hidden md:inline-block text-sm font-medium">
-            {isDemo ? "Demo User" : userProfile?.displayName || "User"}
+            {isDemo ? "Demo User" : userProfile?.name || "User"}
           </span>
         </button>
       </DropdownMenuTrigger>

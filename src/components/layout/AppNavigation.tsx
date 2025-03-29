@@ -24,7 +24,7 @@ const menuItems = [
 const AppNavigation = () => {
   const location = useLocation();
   const { userProfile } = useAuth();
-  const userType = userProfile?.type || "student";
+  const userRole = userProfile?.role || "student";
 
   return (
     <NavigationMenu className="max-w-full justify-start">
@@ -46,7 +46,7 @@ const AppNavigation = () => {
           </NavigationMenuItem>
         ))}
 
-        {userType === "teacher" && (
+        {userRole === "teacher" && (
           <NavigationMenuItem>
             <NavigationMenuTrigger className="flex items-center gap-2">
               <span>Teacher Tools</span>
@@ -76,7 +76,7 @@ const AppNavigation = () => {
           </NavigationMenuItem>
         )}
 
-        {userType === "school" && (
+        {userRole === "school" && (
           <NavigationMenuItem>
             <NavigationMenuTrigger className="flex items-center gap-2">
               <span>School Admin</span>

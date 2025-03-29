@@ -5,7 +5,7 @@ import {
   onAuthStateChanged 
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
+import { auth, db, logoutUser } from '@/lib/firebase';
 
 export type UserRole = 'student' | 'teacher' | 'school';
 
@@ -14,6 +14,7 @@ export interface UserProfile {
   email: string | null;
   role: UserRole;
   name: string;
+  photoURL?: string;
   phoneNumber: string;
   location: string;
   // Student specific
@@ -36,6 +37,7 @@ interface AuthContextType {
   startDemo: (role: UserRole) => void;
   endDemo: () => void;
   demoTimeLeft: number;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -110,6 +112,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const logout = async () => {
+    try {
+      if (isDemo) {
+        endDemo();
+        return;
+      }
+      await logoutUser();
+    } catch (error) {
+      console.error("Error logging out:", error);
+      throw error;
+    }
+  };
+
   const startDemo = (role: UserRole) => {
     // Create a demo profile
     const demoProfile: UserProfile = {
@@ -117,6 +132,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       email: 'demo@example.com',
       role: role,
       name: `Demo ${role.charAt(0).toUpperCase() + role.slice(1)}`,
+      photoURL: '',
       phoneNumber: '555-0000',
       location: 'Demo City',
     };
@@ -143,7 +159,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isDemo,
     startDemo,
     endDemo,
-    demoTimeLeft
+    demoTimeLeft,
+    logout
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

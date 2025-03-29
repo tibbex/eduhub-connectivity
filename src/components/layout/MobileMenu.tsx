@@ -46,14 +46,14 @@ const MobileMenu = () => {
             <div className="mb-4 px-4">
               <div className="flex items-center space-x-3 p-2 border-b pb-4">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={userProfile?.photoURL || ""} alt={userProfile?.displayName || "User"} />
+                  <AvatarImage src={userProfile?.photoURL || ""} alt={userProfile?.name || "User"} />
                   <AvatarFallback>
-                    {userProfile?.displayName ? userProfile.displayName.charAt(0).toUpperCase() : "U"}
+                    {userProfile?.name ? userProfile.name.charAt(0).toUpperCase() : "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="font-medium">
-                    {isDemo ? "Demo User" : userProfile?.displayName || "User"}
+                    {isDemo ? "Demo User" : userProfile?.name || "User"}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {userProfile?.email || "demo@example.com"}
