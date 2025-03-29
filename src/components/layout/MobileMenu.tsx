@@ -1,7 +1,7 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { Link, useLocation } from "react-router-dom";
-import { Book, Home, LogOut, MessageSquare, Settings, User, Video } from "lucide-react";
+import { Book, Home, MessageSquare, Settings, User, Video, LogOut, Menu } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -17,11 +17,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.svg";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
-const menuItems = [
+const primaryMenuItems = [
   { path: "/home", label: "Home", icon: Home },
   { path: "/video", label: "Video", icon: Video },
   { path: "/messaging", label: "Messaging", icon: MessageSquare },
+];
+
+const secondaryMenuItems = [
   { path: "/books", label: "Books & Worksheets", icon: Book },
   { path: "/profile", label: "Profile", icon: User },
   { path: "/settings", label: "Settings", icon: Settings },
@@ -30,6 +34,13 @@ const menuItems = [
 const MobileMenu = () => {
   const location = useLocation();
   const { userProfile, logout, isDemo } = useAuth();
+  const [activeMenuSet, setActiveMenuSet] = useState<'primary' | 'secondary'>('primary');
+
+  const toggleMenuSet = () => {
+    setActiveMenuSet(activeMenuSet === 'primary' ? 'secondary' : 'primary');
+  };
+
+  const activeMenuItems = activeMenuSet === 'primary' ? primaryMenuItems : secondaryMenuItems;
 
   return (
     <SidebarProvider defaultOpen={false}>
@@ -46,7 +57,22 @@ const MobileMenu = () => {
               />
               <h2 className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-eduPurple to-eduBlue">EduHub</h2>
             </div>
-            <SidebarTrigger />
+            <div className="flex items-center gap-2">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  onClick={toggleMenuSet}
+                  variant="outline"
+                  size="sm"
+                  className="mr-2 ls-button"
+                >
+                  {activeMenuSet === 'primary' ? 'More' : 'Main Menu'}
+                </Button>
+              </motion.div>
+              <SidebarTrigger />
+            </div>
           </SidebarHeader>
           
           <SidebarContent>
@@ -70,36 +96,44 @@ const MobileMenu = () => {
             </div>
             
             <SidebarMenu>
-              {menuItems.map((item, index) => {
-                const isActive = location.pathname === item.path;
-                return (
-                  <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton asChild isActive={isActive}>
-                      <Link 
-                        to={item.path} 
-                        className={`group ls-nav-item ${isActive ? 'ls-nav-item-active' : 'ls-nav-item-inactive'} ls-slide-up ls-stagger-${index + 1}`}
-                      >
-                        <motion.div
-                          className="flex items-center gap-3 w-full"
-                          whileTap={{ scale: 0.95 }}
+              <motion.div
+                key={activeMenuSet}
+                initial={{ opacity: 0, x: activeMenuSet === 'primary' ? -20 : 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {activeMenuItems.map((item, index) => {
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton asChild isActive={isActive}>
+                        <Link 
+                          to={item.path} 
+                          className={`group ls-nav-item ${isActive ? 'ls-nav-item-active' : 'ls-nav-item-inactive'} ls-slide-up ls-stagger-${index + 1}`}
                         >
-                          <item.icon className={`h-4 w-4 ${isActive ? 'text-primary' : 'group-hover:text-primary/70'}`} />
-                          <span>{item.label}</span>
-                          {isActive && (
-                            <motion.div
-                              className="ml-auto h-2 w-2 rounded-full bg-primary"
-                              layoutId="mobileActiveIndicator"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                            />
-                          )}
-                        </motion.div>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+                          <motion.div
+                            className="flex items-center gap-3 w-full"
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <item.icon className={`h-4 w-4 ${isActive ? 'text-primary' : 'group-hover:text-primary/70'}`} />
+                            <span>{item.label}</span>
+                            {isActive && (
+                              <motion.div
+                                className="ml-auto h-2 w-2 rounded-full bg-primary"
+                                layoutId="mobileActiveIndicator"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                              />
+                            )}
+                          </motion.div>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </motion.div>
             </SidebarMenu>
           </SidebarContent>
           

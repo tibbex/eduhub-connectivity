@@ -2,15 +2,20 @@
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo.svg";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Menu } from "lucide-react";
 import { useState } from "react";
 import CreatePostDialog from "@/components/post/CreatePostDialog";
 import AppNavigation from "./AppNavigation";
 import UserMenu from "./UserMenu";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<'main' | 'secondary' | null>('main');
+
+  const toggleMenu = () => {
+    setActiveMenu(activeMenu === 'main' ? 'secondary' : 'main');
+  };
 
   return (
     <header className="w-full bg-white border-b sticky top-0 z-50 shadow-sm">
@@ -35,7 +40,33 @@ const Header = () => {
           </Link>
           
           <div className="hidden md:flex">
-            <AppNavigation />
+            <AnimatePresence mode="wait">
+              {activeMenu === 'main' && (
+                <motion.div
+                  key="main-menu"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <AppNavigation />
+                </motion.div>
+              )}
+              {activeMenu === 'secondary' && (
+                <motion.div
+                  key="secondary-menu"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex items-center space-x-4"
+                >
+                  <Link to="/settings" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Settings</Link>
+                  <Link to="/help" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">Help</Link>
+                  <Link to="/about" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">About</Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
         
@@ -43,6 +74,7 @@ const Header = () => {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            className="md:block hidden"
           >
             <Button 
               onClick={() => setIsCreatePostOpen(true)} 
@@ -58,14 +90,30 @@ const Header = () => {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            className="sm:hidden"
           >
             <Button
               onClick={() => setIsCreatePostOpen(true)}
               variant="default"
               size="icon"
-              className="sm:hidden ls-button bg-gradient-to-r from-eduPurple to-eduBlue hover:opacity-90"
+              className="ls-button bg-gradient-to-r from-eduPurple to-eduBlue hover:opacity-90"
             >
               <PlusCircle className="h-4 w-4" />
+            </Button>
+          </motion.div>
+          
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="hidden md:block"
+          >
+            <Button 
+              onClick={toggleMenu} 
+              variant="outline" 
+              size="icon"
+              className="ls-button"
+            >
+              <Menu className="h-4 w-4" />
             </Button>
           </motion.div>
           
