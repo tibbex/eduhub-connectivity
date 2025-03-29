@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Book, Home, MessageSquare, User, Video } from "lucide-react";
+import { Book, Home, MessageSquare, User, Video, ChevronDown } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { motion } from "framer-motion";
 
 const menuItems = [
   { path: "/home", label: "Home", icon: Home },
@@ -26,51 +27,77 @@ const AppNavigation = () => {
   const { userProfile } = useAuth();
   const userRole = userProfile?.role || "student";
 
+  const MotionLink = motion(Link);
+
   return (
     <NavigationMenu className="max-w-full justify-start">
-      <NavigationMenuList className="space-x-2">
-        {menuItems.map((item) => (
-          <NavigationMenuItem key={item.path}>
-            <Link to={item.path}>
-              <NavigationMenuLink
-                className={cn(
-                  navigationMenuTriggerStyle(),
-                  "flex items-center gap-2",
-                  location.pathname === item.path && "bg-accent/50"
-                )}
-              >
-                <item.icon className="h-4 w-4" />
-                <span>{item.label}</span>
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-        ))}
+      <NavigationMenuList className="space-x-1">
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <NavigationMenuItem key={item.path}>
+              <MotionLink to={item.path} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                <NavigationMenuLink
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    "flex items-center gap-2 relative transition-all duration-200 group",
+                    isActive 
+                      ? "bg-primary/10 dark:bg-primary/20 text-primary font-medium" 
+                      : "hover:text-primary/90"
+                  )}
+                >
+                  <item.icon className={cn(
+                    "h-4 w-4 transition-colors duration-200",
+                    isActive 
+                      ? "text-primary" 
+                      : "text-muted-foreground group-hover:text-primary/70"
+                  )} />
+                  <span>{item.label}</span>
+                  {isActive && (
+                    <motion.div 
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" 
+                      layoutId="navIndicator"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    />
+                  )}
+                </NavigationMenuLink>
+              </MotionLink>
+            </NavigationMenuItem>
+          );
+        })}
 
         {userRole === "teacher" && (
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="flex items-center gap-2">
-              <span>Teacher Tools</span>
+            <NavigationMenuTrigger className="flex items-center gap-2 group">
+              <span className="group-hover:text-primary/90 transition-colors duration-200">Teacher Tools</span>
+              <ChevronDown className="h-4 w-4 text-muted-foreground group-hover:text-primary/70 transition-colors duration-200" />
             </NavigationMenuTrigger>
             <NavigationMenuContent>
               <div className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                <Link 
+                <MotionLink 
                   to="/teacher/assignments"
                   className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  whileHover={{ scale: 1.02, backgroundColor: "rgba(var(--accent), 0.5)" }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <div className="text-sm font-medium leading-none">Assignments</div>
+                  <div className="text-sm font-medium leading-none group-hover:text-primary transition-colors">Assignments</div>
                   <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                     Create and manage student assignments
                   </p>
-                </Link>
-                <Link 
+                </MotionLink>
+                <MotionLink 
                   to="/teacher/grades"
                   className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  whileHover={{ scale: 1.02, backgroundColor: "rgba(var(--accent), 0.5)" }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <div className="text-sm font-medium leading-none">Grades</div>
+                  <div className="text-sm font-medium leading-none group-hover:text-primary transition-colors">Grades</div>
                   <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                     Track and manage student grades
                   </p>
-                </Link>
+                </MotionLink>
               </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
@@ -78,29 +105,34 @@ const AppNavigation = () => {
 
         {userRole === "school" && (
           <NavigationMenuItem>
-            <NavigationMenuTrigger className="flex items-center gap-2">
-              <span>School Admin</span>
+            <NavigationMenuTrigger className="flex items-center gap-2 group">
+              <span className="group-hover:text-primary/90 transition-colors duration-200">School Admin</span>
+              <ChevronDown className="h-4 w-4 text-muted-foreground group-hover:text-primary/70 transition-colors duration-200" />
             </NavigationMenuTrigger>
             <NavigationMenuContent>
               <div className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                <Link 
+                <MotionLink 
                   to="/school/teachers"
                   className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  whileHover={{ scale: 1.02, backgroundColor: "rgba(var(--accent), 0.5)" }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <div className="text-sm font-medium leading-none">Manage Teachers</div>
+                  <div className="text-sm font-medium leading-none group-hover:text-primary transition-colors">Manage Teachers</div>
                   <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                     View and manage school teachers
                   </p>
-                </Link>
-                <Link 
+                </MotionLink>
+                <MotionLink 
                   to="/school/students"
                   className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                  whileHover={{ scale: 1.02, backgroundColor: "rgba(var(--accent), 0.5)" }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  <div className="text-sm font-medium leading-none">Manage Students</div>
+                  <div className="text-sm font-medium leading-none group-hover:text-primary transition-colors">Manage Students</div>
                   <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                     View and manage school students
                   </p>
-                </Link>
+                </MotionLink>
               </div>
             </NavigationMenuContent>
           </NavigationMenuItem>
